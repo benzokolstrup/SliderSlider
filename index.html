@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slider</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        .slider-container{
+            max-width: 100%;
+            position: relative;
+            overflow: hidden;
+            list-style: none;
+        }
+        .slider-wrapper{
+            max-width: 100%;
+            display: flex;
+            position: relative;
+            height: 100%;
+            z-index: 1;
+            transform: translate(0);
+        }
+        .slider-slide{
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid red;
+        }
+        .slider-slide img{
+            max-width: 100%;
+            height: 200px;
+            object-fit: contain;
+        }
+        .slider-arrow{
+            width: 50px;
+            height: 50px;
+            position: absolute;
+            z-index: 10;
+            top: 50%;
+            transform: translate(0, -50%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: rgba(255, 255, 255, .7);
+            font-size: 30px;
+            color: #000;
+            border: 1px solid #000;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .slider-next-arrow{
+            right: 0;
+        }
+        .slider-prev-arrow{
+            left: 0;
+        }
+        .slider-next-arrow::after{
+            content: "\2192";
+        }
+        .slider-prev-arrow::after{
+            content: "\2190";
+        }
+    </style>
+</head>
+<body>
+    <div class="slider-container">
+        <div class="slider-wrapper"></div>
+        <div class="slider-prev-arrow slider-arrow"></div>
+        <div class="slider-next-arrow slider-arrow"></div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
