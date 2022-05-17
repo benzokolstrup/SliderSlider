@@ -39,11 +39,12 @@ function initPhotos(photos){
 
         cardContainer.append(title);
     });
+
     const slider = new Slider('.slider-container', {
         slidesInView: 1,
         slidesGroup: 1,
         slideGap: 20,
-        speed: 500,
+        speed: 4500,
         navigation: {
             nextTrigger: '.slider-next-arrow',
             prevTrigger: '.slider-prev-arrow'
