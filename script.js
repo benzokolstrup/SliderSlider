@@ -1,5 +1,5 @@
 const KEY = '563492ad6f91700001000001edbaa34fd5e84273b5e9ef1e332b4d53';
-let query = 'glacier';
+let query = 'forest';
 let slides = 20;
 let photos = [];
 
@@ -80,7 +80,7 @@ class Slider{
         this.sliderWidth = this.sliderContainer.offsetWidth / this.sliderProperties.slidesInView;
         this.slides = this.sliderContainer.querySelectorAll('.slider-slide');
         this.sliderItemsAmount = this.slides.length;
-        this.sliderItemPosition = 0;
+        this.sliderItemPosition = this.slides.length - this.slides.length;
     }
     formatSlides(){
         let updatedSlideWidth = this.calculateSlidesWidth();
@@ -134,7 +134,7 @@ class Slider{
                 updatedSlidesInView = this.sliderProperties.breakPoints[this.breakPoints[i]].slidesGroup;
             }
             if(window.innerWidth < this.breakPoints[i] && !this.breakPoints[i - 1]){
-                updatedSlidesInView = this.sliderProperties.slideGroup;
+                updatedSlidesInView = this.sliderProperties.slidesGroup;
             }
         }
         return updatedSlidesInView;
