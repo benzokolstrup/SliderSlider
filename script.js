@@ -60,10 +60,6 @@ function initPhotos(photos){
             1200: {
                 slidesInView: 5,
                 slidesGroup: 5,
-            },
-            1400: {
-                slidesInView: 6,
-                slidesGroup: 6,
             }
         }
     });

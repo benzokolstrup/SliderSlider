@@ -4,114 +4,127 @@ class Slider{
         this.breakPoints = Object.keys(this.sliderProperties.breakPoints);
         this.sliderContainer = document.querySelector(sliderInitSelector);
         this.sliderWrapper = this.sliderContainer.querySelector('.slider-wrapper');
-        this.sliderWidth = this.sliderContainer.offsetWidth / this.sliderProperties.slidesInView;
+        this.sliderWidth = this.sliderContainer.offsetWidth;
         this.slides = this.sliderContainer.querySelectorAll('.slider-slide');
-        this.sliderItemsAmount = this.slides.length;
-        this.sliderItemPosition = this.slides.length - this.slides.length;
-        this.totalGapSlided = 0;
+        this.sliderItems = this.slides.length;
+        this.firstSlideIndex = 0;
+        this.lastSlideIndex = this.firstSlideIndex + this.calculateBreakpoint().slidesInView - 1;
+        this.firstSlideInView = true;
+        this.lastSlideInView = false;
     }
-    formatSlides(){
-        console.log(this.calculateSlidesWidth())
-        let updatedSlideWidth = this.calculateSlidesWidth() - (this.sliderProperties.slideGap * 2);
-        let calculateNegativeSlideGap =  this.sliderProperties.slideGap / this.calculateSlidesInview();
-        this.slides.forEach(slide => {
-            slide.style.width = `${updatedSlideWidth + calculateNegativeSlideGap}px`;
-            slide.style.marginRight = `${this.sliderProperties.slideGap}px`;
-        });
-        if(this.sliderItemPosition + this.calculateSlidesInview() >= this.sliderItemsAmount){
-            this.sliderWrapper.style.transform = `matrix(1, 0, 0, 1, ${-Math.abs(updatedSlideWidth * (this.sliderItemsAmount - this.calculateSlidesInview()))}, 0)`;
-        }else{
-            this.sliderWrapper.style.transform = `matrix(1, 0, 0, 1, ${-Math.abs(updatedSlideWidth * this.sliderItemPosition)}, 0)`;
-        }
-    }
-    calculateSlidesWidth(){
-        let updatedSlideWidth;
+
+    // This method returns the current breakpoint, based on viewport width
+    calculateBreakpoint(){
+        let breakpoint;
         for(let i = 0; i < this.breakPoints.length; i++){
             if(window.innerWidth > this.breakPoints[i] && window.innerWidth < this.breakPoints[i + 1]){
-                updatedSlideWidth = (this.sliderContainer.offsetWidth + (this.sliderProperties.breakPoints[this.breakPoints[i]].slidesInView * this.sliderProperties.slideGap)) / this.sliderProperties.breakPoints[this.breakPoints[i]].slidesInView;
+                breakpoint = this.sliderProperties.breakPoints[this.breakPoints[i]];
             }
             if(window.innerWidth > this.breakPoints[i] && !this.breakPoints[i + 1]){
-                updatedSlideWidth = (this.sliderContainer.offsetWidth + (this.sliderProperties.breakPoints[this.breakPoints[i]].slidesInView * this.sliderProperties.slideGap)) / this.sliderProperties.breakPoints[this.breakPoints[i]].slidesInView;
+                breakpoint = this.sliderProperties.breakPoints[this.breakPoints[i]];
             }
             if(window.innerWidth < this.breakPoints[i] && !this.breakPoints[i - 1]){
-                updatedSlideWidth = (this.sliderContainer.offsetWidth + (this.sliderProperties.slideGap * this.sliderProperties.slidesInView)) / this.sliderProperties.slidesInView;
+                breakpoint = this.sliderProperties;
             }
         }
-        return updatedSlideWidth;
+        return breakpoint;
     }
-    calculateSlidesInview(){
-        let slidesInView;
-        for(let i = 0; i < this.breakPoints.length; i++){
-            if(window.innerWidth > this.breakPoints[i] && window.innerWidth < this.breakPoints[i + 1]){
-                slidesInView = this.sliderProperties.breakPoints[this.breakPoints[i]].slidesInView;
-            }
-            if(window.innerWidth > this.breakPoints[i] && !this.breakPoints[i + 1]){
-                slidesInView = this.sliderProperties.breakPoints[this.breakPoints[i]].slidesInView;
-            }
-            if(window.innerWidth < this.breakPoints[i] && !this.breakPoints[i - 1]){
-                slidesInView = this.sliderProperties.slidesInView;
-            }
+
+    // Calculating the width of a single slide
+    calculateSlideWidth(){
+        let breakpoint = this.calculateBreakpoint();
+        this.sliderWidth = this.sliderContainer.offsetWidth;
+        let slideWidth = (this.sliderWidth) / breakpoint.slidesInView; 
+        return slideWidth;
+    }
+
+
+    calculateSlideGap(){
+        let breakpoint = this.calculateBreakpoint();
+        let slideGap = breakpoint.slideGap;
+        if(slideGap == undefined){
+            slideGap = this.sliderProperties.slideGap;
         }
-        return slidesInView;
+        return slideGap;
     }
-    calculateSlidesGroup(){
-        let updatedSlidesInView;
-        for(let i = 0; i < this.breakPoints.length; i++){
-            if(window.innerWidth > this.breakPoints[i] && window.innerWidth < this.breakPoints[i + 1]){
-                updatedSlidesInView = this.sliderProperties.breakPoints[this.breakPoints[i]].slidesGroup;
-            }
-            if(window.innerWidth > this.breakPoints[i] && !this.breakPoints[i + 1]){
-                updatedSlidesInView = this.sliderProperties.breakPoints[this.breakPoints[i]].slidesGroup;
-            }
-            if(window.innerWidth < this.breakPoints[i] && !this.breakPoints[i - 1]){
-                updatedSlidesInView = this.sliderProperties.slidesGroup;
-            }
-        }
-        return updatedSlidesInView;
-    }
+
+
     next(){
-        let updatedSlidesInViewWidth = this.getTranslateValue();
-        let updatedSlideGap = this.sliderProperties.slideGap * (this.calculateSlidesInview() - 1);        
-        this.sliderItemPosition = this.sliderItemPosition + this.calculateSlidesGroup();
-        if((this.calculateSlidesInview() + this.sliderItemPosition) > this.sliderItemsAmount){
-            this.sliderItemPosition = this.sliderItemsAmount;
-            this.sliderWrapper.style.transform = `matrix(1, 0, 0, 1, ${-Math.abs(this.calculateSlidesWidth() * (this.sliderItemPosition - this.calculateSlidesInview()) - this.totalGapSlided)}, 0)`;
-            console.log(-Math.abs(this.calculateSlidesWidth() * (this.sliderItemPosition - this.calculateSlidesInview())) + this.totalGapSlided)
-            this.sliderItemPosition = this.sliderItemsAmount - this.calculateSlidesInview();
-            console.log("if")
+        this.slide('next');
+        let breakpoint = this.calculateBreakpoint();
+        let slideWidth = this.calculateSlideWidth();
+        let currentTranslateValue = this.getTranslateValue();
+        let totalSlideValue = currentTranslateValue -= (breakpoint.slidesGroup * slideWidth);
+        if(this.lastSlideIndex == this.sliderItems - 1){
+            this.sliderWrapper.style.transform = `matrix(1, 0, 0, 1, ${-Math.abs(slideWidth * this.firstSlideIndex)}, 0)`;
         }else{
-            this.totalGapSlided += updatedSlideGap;
-            updatedSlidesInViewWidth -= (this.calculateSlidesGroup() * this.calculateSlidesWidth());
-            this.sliderWrapper.style.transform = `matrix(1, 0, 0, 1, ${updatedSlidesInViewWidth + updatedSlideGap}, 0)`;
-            console.log("else")
+            this.sliderWrapper.style.transform = `matrix(1, 0, 0, 1, ${-Math.abs(totalSlideValue)}, 0)`;
         }
-        console.log("NEXT", this.sliderItemPosition);
     }
+
+
     previous(){
-        let updatedSlidesInViewWidth = this.getTranslateValue();
-        let updatedSlideGap = this.sliderProperties.slideGap * (this.calculateSlidesInview() - 1);
-        if(this.sliderItemPosition == 30){
-            this.sliderItemPosition = this.sliderItemPosition - (this.calculateSlidesGroup() * 2);
+        this.slide('previous');
+        let breakpoint = this.calculateBreakpoint();
+        let slideWidth = this.calculateSlideWidth();
+        let currentTranslateValue = this.getTranslateValue();
+        let totalSlideValue = currentTranslateValue += (breakpoint.slidesGroup * slideWidth);
+        if(this.firstSlideIndex == 0){
+            this.sliderWrapper.style.transform = `matrix(1, 0, 0, 1, 0, 0)`;
         }else{
-            this.sliderItemPosition = this.sliderItemPosition - this.calculateSlidesGroup();
+            this.sliderWrapper.style.transform = `matrix(1, 0, 0, 1, ${totalSlideValue}, 0)`;
+        }
+    }
+
+
+    slide(direction){
+        let breakpoint = this.calculateBreakpoint();
+        let slidesGroup = breakpoint.slidesGroup;
+        if(direction == 'next'){
+            this.firstSlideIndex += slidesGroup;
+            this.lastSlideIndex = this.firstSlideIndex + this.calculateBreakpoint().slidesInView - 1;
+            if(this.lastSlideIndex >= this.sliderItems - 1){
+                this.lastSlideIndex = this.sliderItems - 1;
+                this.firstSlideIndex = this.lastSlideIndex - this.calculateBreakpoint().slidesInView + 1;
+            }
+        }
+        if(direction == 'previous'){
+            this.firstSlideIndex -= slidesGroup;
+            this.lastSlideIndex = this.firstSlideIndex + this.calculateBreakpoint().slidesInView - 1;
+            if(this.firstSlideIndex <= 0){
+                this.firstSlideIndex = 0;
+                this.lastSlideIndex = this.firstSlideIndex + this.calculateBreakpoint().slidesInView - 1;
+            }
+        }
+        console.log(`First slide: ${this.firstSlideIndex}, Last slide: ${this.lastSlideIndex}`);
+    }
+
+
+    formatSlides(){
+        let slideWidth = this.calculateSlideWidth() - this.calculateSlideGap();
+        this.slides.forEach(slide => {
+            slide.style.width = `${slideWidth}px`;
+            slide.style.marginRight = `${this.calculateSlideGap()}px`;
+        });
+        let totalSlideValue = this.firstSlideIndex * slideWidth;
+        if(this.lastSlideIndex == this.sliderItems - 1){
+            this.lastSlideIndex = this.sliderItems - 1;
+            this.firstSlideIndex = this.lastSlideIndex - this.calculateBreakpoint().slidesInView + 1;
+            this.sliderWrapper.style.transform = `matrix(1, 0, 0, 1, ${-Math.abs(slideWidth * this.firstSlideIndex)}, 0)`;
+        }else{
+            this.sliderWrapper.style.transform = `matrix(1, 0, 0, 1, ${-totalSlideValue}, 0)`;
         }
         
-        if((this.calculateSlidesInview() - this.sliderItemPosition) > 0){
-            this.sliderItemPosition = 0;
-            this.sliderWrapper.style.transform = `matrix(1, 0, 0, 1, ${0}, 0)`;
-            this.totalGapSlided = 0;
-        }else{
-            this.totalGapSlided -= updatedSlideGap;
-            updatedSlidesInViewWidth += (this.calculateSlidesGroup() * this.calculateSlidesWidth());
-            this.sliderWrapper.style.transform = `matrix(1, 0, 0, 1, ${updatedSlidesInViewWidth - updatedSlideGap}, 0)`;
-        }
-        console.log("PREVIOUS", this.sliderItemPosition);
     }
+
+
     getTranslateValue(){
         var style = window.getComputedStyle(this.sliderWrapper);
         var matrix = new WebKitCSSMatrix(style.transform);
         return matrix.m41;
     }
+
+
     initSlider(){
         console.log(this)
         let isSliding = false;
@@ -120,18 +133,24 @@ class Slider{
             this.formatSlides();
         });
         document.querySelector(this.sliderProperties.navigation.nextTrigger).addEventListener('click', () => {
-            if(this.sliderItemPosition == this.sliderItemsAmount - this.calculateSlidesInview() || this.sliderItemPosition == 0){isSliding = false;};
             this.sliderWrapper.style.transition = `${this.sliderProperties.speed}ms`;
             if(isSliding == true) return;
             isSliding = true;
-            this.next(isSliding);
+            if(this.lastSlideIndex == this.sliderItems - 1){
+                isSliding = false;
+                this.sliderWrapper.style.transition = `0ms`;
+            }
+            this.next();
         });
         document.querySelector(this.sliderProperties.navigation.prevTrigger).addEventListener('click', () => {
-            if(this.sliderItemPosition == this.sliderItemsAmount - this.calculateSlidesInview() || this.sliderItemPosition == 0){isSliding = false;};
             this.sliderWrapper.style.transition = `${this.sliderProperties.speed}ms`;
             if(isSliding == true) return;
             isSliding = true;
-            this.previous(isSliding);
+            if(this.firstSlideIndex == 0){
+                isSliding = false;
+                this.sliderWrapper.style.transition = `0ms`;
+            }
+            this.previous();
         });
         this.sliderWrapper.addEventListener('transitionend', () => {
             isSliding = false;
