@@ -1,5 +1,5 @@
 const KEY = '563492ad6f91700001000001edbaa34fd5e84273b5e9ef1e332b4d53';
-let query = 'forest';
+let query = 'snow';
 let slides = 20;
 let photos = [];
 
@@ -38,7 +38,7 @@ function initPhotos(photos){
     const slider = new Slider('.slider-container', {
         slidesInView: 1,
         slidesGroup: 1,
-        slideGap: 20,
+        slideGap: 15,
         speed: 400,
         navigation: {
             nextTrigger: '.slider-next-arrow',
@@ -51,15 +51,15 @@ function initPhotos(photos){
             },
             800: {
                 slidesInView: 3,
-                slidesGroup: 3,
+                slidesGroup: 2,
             },
             1000: {
                 slidesInView: 4,
-                slidesGroup: 4,
+                slidesGroup: 2,
             },
             1200: {
                 slidesInView: 5,
-                slidesGroup: 5,
+                slidesGroup: 2,
             }
         }
     });
