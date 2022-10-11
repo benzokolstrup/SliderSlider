@@ -36,16 +36,17 @@ function initPhotos(photos){
         cardContainer.append(title);
     });
 
-    //pagination: {
-    //    container: '.sliderslider-pagination',
-    //    type: 'bullets'
-    //}
+    /*
+    pagination: {
+        container: '.sliderslider-pagination',
+        type: 'bullets'
+    }
 
-    //autoPlay: true
-    //autoPlaySpeed: 500
+    autoPlay: true
+    autoPlaySpeed: 500
 
-    //infinite: true
-    
+    infinite: true
+    */
     const sliderslider = new Sliderslider('.sliderslider-container', {
         slidesInView: 1,
         slidesGroup: 1,
