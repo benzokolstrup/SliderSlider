@@ -129,7 +129,7 @@ class Sliderslider{
     }
 
     autoPlay(){
-        
+
     }
     pagination(){
         console.log(this.totalSlideViews, this.firstSlideIndex);
